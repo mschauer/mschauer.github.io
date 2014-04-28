@@ -1,0 +1,35 @@
+body {
+		margin-top: 50px;
+		margin-bottom: 50px;
+		margin-left: 200px;
+		font-family: sans-serif;
+
+	}
+p, table {margin-left: 40px;
+		min-width:300px;
+		max-width:780px;
+
+}
+
+td {padding: 10px;}
+
+a {font-weight: 500; text-decoration: underline;}
+
+a:visited {
+	color: #065; 
+}
+
+a:link {
+	color: #047;
+}
+a:hover {
+	text-decoration: underline;
+}
+a:active {
+	color: #048;
+}
+
+h1, h2
+{
+		font-family: "garamond", serif;
+		color: #033;
