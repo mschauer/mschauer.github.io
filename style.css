@@ -1,14 +1,24 @@
+
 body {
-		margin-top: 50px;
-		margin-bottom: 50px;
-		margin-left: 200px;
-		font-family: sans-serif;
+    margin:1em auto;
+    margin-left: 6em;
+    max-width:40em;
+    padding:0 .62em;
+    font:1em/1.35em sans-serif;
+}
 
-	}
-p, table {margin-left: 40px;
-		min-width:300px;
-		max-width:780px;
+h1,h2,h3 {
+    line-height:1.2em;
+}
 
+@media print{
+    body{
+        max-width:none
+    }
+}
+
+p, table {
+    margin-left: 1em;
 }
 
 td {padding: 10px;}
@@ -16,20 +26,35 @@ td {padding: 10px;}
 a {font-weight: 500; text-decoration: underline;}
 
 a:visited {
-	color: #065; 
+    color: #065; 
 }
 
 a:link {
-	color: #047;
+    color: #047;
 }
 a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 a:active {
-	color: #048;
+    color: #048;
 }
 
-h1, h2
-{
-		font-family: "garamond", serif;
-		color: #033;
+h1, h2, h3 {
+    font-family: "garamond", serif;
+    color: #033;
+}
+h3 {
+    color: #022;
+}
+
+.titel {
+    letter-spacing: 0.08em;
+    background:#ffd;
+    quotes: "«" "»" ;
+}
+.titel:before {
+    content: open-quote;
+}
+.titel:after {
+    content: close-quote;
+}
