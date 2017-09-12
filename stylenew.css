@@ -57,3 +57,10 @@ h3 {
 .titel:after {
     content: close-quote;
 }
+
+#logo {}
+
+#logo img{
+ display: block;
+ margin: auto;
+}
