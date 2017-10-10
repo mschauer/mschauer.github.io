@@ -1,6 +1,6 @@
-body {
+#content {
     margin:1em auto;
-    margin-left: 6em;
+    margin-left: 8em;
     max-width:40em;
     padding:0 .62em;
     font:1em/1.35em sans-serif;
@@ -64,3 +64,39 @@ h3 {
  display: block;
  margin: auto;
 }
+
+
+.margin { 
+     height:25px; width:25px; 
+     float: left;
+     margin-left:-35px;
+     margin-top: 5px;
+}
+
+.symbol {
+    position: relative;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-45%);
+}
+
+nav#navbar { 
+    position:fixed; 
+/*    top:45%; 
+    right:20px; */
+    margin: 0px;
+    padding: 0px;
+    left: -5px;
+    z-index:9999; 
+}
+
+/* I added #main to the selector of the active class */
+nav#navbar li {list-style-type: none;}
+nav#navbar a:hover, nav#navbar li.active a {
+        color: #FFFFFF; background: #033; 
+}
+nav#navbar a { 
+    text-decoration: none; margin-bottom:10px; 
+    color: #FFFFFF; background: #788; 
+    display:block; height:45px; width:45px; 
+    overflow:hidden; }
