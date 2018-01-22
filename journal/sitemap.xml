@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</loc>
+    <lastmod>2018-01-19T18:20:18+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/</loc>
+    <lastmod>2018-01-19T18:20:18+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/categories/julia/</loc>
+    <lastmod>2018-01-19T18:20:18+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/posts/</loc>
+    <lastmod>2018-01-19T18:20:18+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

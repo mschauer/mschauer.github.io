@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Julia on Journal</title>
+    <link>http://mschauer.eu/journal/categories/julia/</link>
+    <description>Recent content in Julia on Journal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 19 Jan 2018 18:20:18 +0100</lastBuildDate>
+    
+	<atom:link href="http://mschauer.eu/journal/categories/julia/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Parameter inference for a simple SIR model</title>
+      <link>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</link>
+      <pubDate>Fri, 19 Jan 2018 18:20:18 +0100</pubDate>
+      
+      <guid>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</guid>
+      <description>Introduction Mathieu Besançon made a nice blog post on Chris&amp;rsquo; DifferentialEquations ecosystem, https://mbesancon.github.io/post/2017-12-14-diffeq-julia/ .
+One of the examples is simple model tracking individuals in a population with three states $S$, $I$, $R$.
+Let $u = (u_1, u_2, u_2)$ be the vector of individuals in these states.
+ At any moment an individual of state $A$ can convince a individual of state $B$ to join the fraction $A$ $$ S,I \mapsto 2I $$ This reaction happens proportional to the number of possible pairs $A, B$ which can match up, so proportional to $u_1 u_2$ with proportionality constant $\alpha$.</description>
+    </item>
+    
+  </channel>
+</rss>
