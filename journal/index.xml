@@ -13,10 +13,10 @@
     
     <item>
       <title>Parameter inference for a simple SIR model</title>
-      <link>http://mschauer.eu/journal/blabla/2018/01/19/parameter-inference-for-a-simple-sir-model.html</link>
+      <link>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</link>
       <pubDate>Fri, 19 Jan 2018 18:20:18 +0100</pubDate>
       
-      <guid>http://mschauer.eu/journal/blabla/2018/01/19/parameter-inference-for-a-simple-sir-model.html</guid>
+      <guid>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</guid>
       <description>Introduction Mathieu Besançon made a nice blog post on Chris&amp;rsquo; DifferentialEquations ecosystem, https://mbesancon.github.io/post/2017-12-14-diffeq-julia/ .
 One of the examples is simple model tracking individuals in a population with three states $S$, $I$, $R$.
 Let $u = (u_1, u_2, u_2)$ be the vector of individuals in these states.
