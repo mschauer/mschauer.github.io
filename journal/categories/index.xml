@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Journal</title>
-    <link>http://mschauer.eu/journal/categories/</link>
+    <link>http://mschauer.eu/journal/categories.html</link>
     <description>Recent content in Categories on Journal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
@@ -12,10 +12,10 @@
     
     <item>
       <title>Julia</title>
-      <link>http://mschauer.eu/journal/categories/julia/</link>
+      <link>http://mschauer.eu/journal/categories/julia.html</link>
       <pubDate>Fri, 19 Jan 2018 18:20:18 +0100</pubDate>
       
-      <guid>http://mschauer.eu/journal/categories/julia/</guid>
+      <guid>http://mschauer.eu/journal/categories/julia.html</guid>
       <description></description>
     </item>
     
