@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Multivariate stochastic differential equations with **Bridge** | Journal</title>
+    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../../../css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Multivariate stochastic differential equations with **Bridge**</span></h1>
+
+<h2 class="date">2018/01/31</h2>
+</div>
+
+<main>
+
+
+<p>This <code>IJulia</code> script converted blog-post gives a tour for my package <code>Bridge</code> with focus on multivariate stochastic differential equations. I use <code>Makie.jl</code> for the visualisations.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>To run this <code>IJulia</code> script install Bridge and checkout the master branch to run.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Pkg.add(&#34;Bridge&#34;)</span>
+<span style="color:#888"># Pkg.checkout(&#34;Bridge&#34;)</span></code></pre></div>
+<p>The installation of <code>Makie</code> is a bit tricky and is detailed in the <code>README.md</code> file of <code>Makie</code>.</p>
+
+<h2 id="setting-the-scene">Setting the scene</h2>
+
+<p>The next few lines load the needed packages and some scripts.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> Bridge, StaticArrays, Makie, Bridge<span style="color:#333">.</span>Models, Colors, GeometryTypes</code></pre></div>
+<pre><code>[1m[36mINFO: [39m[22m[36mRecompiling stale cache file /Users/schauermr/.julia/lib/v0.6/Bridge.ji for module Bridge.
+[39m
+</code></pre>
+
+<div id="interact-js-shim">
+    <script charset="utf-8">
+(function (IPython, $, _, MathJax) {
+    $.event.special.destroyed = {
+    remove: function(o) {
+        if (o.handler) {
+        o.handler.apply(this, arguments)
+        }
+    }
+    }
+
+    var OutputArea = IPython.version >= "4.0.0" ? require("notebook/js/outputarea").OutputArea : IPython.OutputArea;
+
+    var redrawValue = function (container, type, val) {
+    var selector = $("<div/>");
+    var oa = new OutputArea(_.extend(selector, {
+        selector: selector,
+        prompt_area: true,
+        events: IPython.events,
+        keyboard_manager: IPython.keyboard_manager
+    })); // Hack to work with IPython 2.1.0
+
+    switch (type) {
+    case "image/png":
+            var _src = 'data:' + type + ';base64,' + val;
+        $(container).find("img").attr('src', _src);
+        break;
+    case "text/latex":
+        if (MathJax){
+            var math = MathJax.Hub.getAllJax(container)[0];
+            MathJax.Hub.Queue(["Text", math, val.replace(/^\${1,2}|\${1,2}$/g, '')]);
+            break;
+        }
+    default:
+        var toinsert = OutputArea.append_map[type].apply(
+        oa, [val, {}, selector]
+        );
+        $(container).empty().append(toinsert.contents());
+        selector.remove();
+    }
+    }
+
+
+    $(document).ready(function() {
+    function initComm(evt, data) {
+        var comm_manager = data.kernel.comm_manager;
+        //_.extend(comm_manager.targets, require("widgets/js/widget"))
+        comm_manager.register_target("Signal", function (comm) {
+            comm.on_msg(function (msg) {
+                var val = msg.content.data.value;
+                $(".signal-" + comm.comm_id).each(function() {
+                var type = $(this).data("type");
+                if (typeof(val[type]) !== "undefined" && val[type] !== null) {
+                    redrawValue(this, type, val[type], type);
+                }
+                });
+                delete val;
+                delete msg.content.data.value;
+            });
+        });
+
+        // coordingate with Comm and redraw Signals
+        // XXX: Test using Reactive here to improve performance
+        $([IPython.events]).on(
+        'output_appended.OutputArea', function (event, type, value, md, toinsert) {
+            if (md && md.reactive) {
+                // console.log(md.comm_id);
+                toinsert.addClass("signal-" + md.comm_id);
+                toinsert.data("type", type);
+                // Signal back indicating the mimetype required
+                var comm_manager = IPython.notebook.kernel.comm_manager;
+                var comm = comm_manager.comms[md.comm_id];
+                comm.then(function (c) {
+                    c.send({action: "subscribe_mime",
+                       mime: type});
+                    toinsert.bind("destroyed", function() {
+                        c.send({action: "unsubscribe_mime",
+                               mime: type});
+                    });
+                })
+            }
+        });
+    }
+
+    try {
+        // try to initialize right away. otherwise, wait on the status_started event.
+        initComm(undefined, IPython.notebook);
+    } catch (e) {
+        $([IPython.events]).on('kernel_created.Kernel kernel_created.Session', initComm);
+    }
+    });
+})(IPython, jQuery, _, MathJax);
+</script>
+    <script>
+        window.interactLoadedFlag = true
+       $("#interact-js-shim").bind("destroyed", function () {
+           if (window.interactLoadedFlag) {
+               console.warn("JavaScript required by Interact will be removed if you remove this cell or run using Interact more than once.")
+           }
+       })
+       $([IPython.events]).on("kernel_starting.Kernel kernel_restarting.Kernel", function () { window.interactLoadedFlag = false })
+   </script>
+</div>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">include(<span style="background-color:#fff0f0">&#34;../extra/makie.jl&#34;</span>);</code></pre></div>
+<p>Some definitions.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">srand(<span style="color:#00d;font-weight:bold">5</span>)
+sphere <span style="color:#333">=</span> Sphere(Point3f0(<span style="color:#00d;font-weight:bold">0</span>,<span style="color:#00d;font-weight:bold">0</span>,<span style="color:#00d;font-weight:bold">0</span>), <span style="color:#60e;font-weight:bold">1.0f0</span>)
+circle <span style="color:#333">=</span> Sphere(Point2f0(<span style="color:#00d;font-weight:bold">0</span>,<span style="color:#00d;font-weight:bold">0</span>), <span style="color:#60e;font-weight:bold">1.0f0</span>)
+perspective <span style="color:#333">=</span> <span style="color:#555;font-weight:bold">@SArray</span> <span style="color:#339;font-weight:bold">Float32</span>[<span style="color:#60e;font-weight:bold">0.433</span> <span style="color:#60e;font-weight:bold">0.901</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">1.952</span>; <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.237</span> <span style="color:#60e;font-weight:bold">0.114</span> <span style="color:#60e;font-weight:bold">0.965</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">20.43</span>; <span style="color:#60e;font-weight:bold">0.869</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.418</span> <span style="color:#60e;font-weight:bold">0.263</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">90.271</span>; <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">1.0</span>];</code></pre></div>
+<h2 id="time">Time</h2>
+
+<p><code>Bridge</code> mostly works with fix time grid methods. To get started, define a grid of time points <code>tt</code> say in the interval <code>[0, 5]</code> on which you want to simulate the process.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">T <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">5.00</span>
+n <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10001</span> <span style="color:#888"># total length</span>
+dt <span style="color:#333">=</span> T<span style="color:#333">/</span>(n <span style="color:#333">-</span> <span style="color:#00d;font-weight:bold">1</span>)
+tt <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span><span style="color:#333">:</span>dt<span style="color:#333">:</span>T
+;</code></pre></div>
+<h2 id="space">Space</h2>
+
+<p><code>Bridge</code> interacts nicely with <code>StaticArrays</code>. We use <code>SVector{3,Float64}</code> for points in 3d space.
+In <code>Bridge.Models</code> the alias <code>ℝ{3} == SVector{3,Float64}</code> is defined. Because I often use MCMC methods and have to sample thousands of solutions, I try to make sure the functions are fast and have minimal overhead. Using <code>SVector</code>s helps alot.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">ℝ{<span style="color:#00d;font-weight:bold">3</span>}</code></pre></div>
+<pre><code>SVector{3,Float64}
+</code></pre>
+
+<h2 id="3d-wiener-process-or-brownian-motion">3D Wiener process or Brownian motion</h2>
+
+<p><code>Bridge.jl</code> is a statistical toolbox for diffusion processes and stochastic differential equations.
+The simplest diffusion process is a Brownian motion. The distribution and concept of a Brownian motion is represented by the object <code>Wiener{T}()</code> where <code>T</code> is the value type. As long as <code>randn(T)</code> is defined, <code>Wiener{T}()</code> can be sampled.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">Wiener{<span style="color:#339;font-weight:bold">Float64</span>}()
+Wiener{<span style="color:#339;font-weight:bold">Complex</span>{<span style="color:#339;font-weight:bold">Float64</span>}}()</code></pre></div>
+<pre><code>Bridge.Wiener{Complex{Float64}}()
+</code></pre>
+
+<p>But now for 3d Brownian motion&hellip;</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">Wiener{ℝ{<span style="color:#00d;font-weight:bold">3</span>}}()</code></pre></div>
+<pre><code>Bridge.Wiener{SVector{3,Float64}}()
+</code></pre>
+
+<p>Use <code>sample</code> to exactly sample a 3d <code>Wiener</code> process on at the time points <code>tt</code>.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">W <span style="color:#333">=</span> sample(tt, Wiener{ℝ{<span style="color:#00d;font-weight:bold">3</span>}}())</code></pre></div>
+<pre><code>Bridge.SamplePath{SVector{3,Float64}}([0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004, 0.0045  …  4.9955, 4.996, 4.9965, 4.997, 4.9975, 4.998, 4.9985, 4.999, 4.9995, 5.0], SVector{3,Float64}[[0.0, 0.0, 0.0], [0.0327429, 0.00583326, -0.00555515], [0.0581026, -0.0293756, -0.0256774], [0.045495, -0.0523616, -0.0271225], [0.0546075, -0.0207844, -0.0123186], [0.047648, -0.0185863, 0.0070987], [0.052417, -0.0398085, -0.0022569], [0.069798, -0.0385233, -0.0138994], [0.0959046, -0.0322122, 0.0603608], [0.0990595, -0.0609897, 0.0192606]  …  [-0.631677, -0.949839, -0.773298], [-0.640412, -0.972126, -0.75062], [-0.66116, -0.958156, -0.798044], [-0.698215, -0.926062, -0.784364], [-0.684498, -0.938696, -0.738218], [-0.714381, -0.926597, -0.75491], [-0.727137, -0.966003, -0.763791], [-0.77403, -0.978722, -0.755095], [-0.749953, -0.996518, -0.733079], [-0.754657, -1.0043, -0.721557]])
+</code></pre>
+
+<p>The function <code>sample</code> returns a <code>SamplePath</code> <code>X</code>.
+<code>SamplePath</code> is the time series object of <code>Bridge.jl</code>, basically a <code>struct</code> with a vector of time points <code>X.tt</code> and a vector of locations <code>X.yy</code>.</p>
+
+<p>The script <code>extra/makie.jl</code> defines a recipe for plotting <code>SamplePath</code>s with <code>Makie</code>.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 1: Brownian motion path</span>
+
+scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">200</span>, <span style="color:#00d;font-weight:bold">200</span>))
+lines(W, linewidth <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.5</span>, color <span style="color:#333">=</span> viridis(n))
+scatter([W<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.09</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>)) <span style="color:#888"># starting point</span>
+center!(scene)</code></pre></div>
+<p><em>Figure 1.</em> Brownian motion in 3d. Colors indicate progress of time.</p>
+
+<h2 id="lorenz-system-of-ordinary-differential-equations">Lorenz system of ordinary differential equations</h2>
+
+<p><code>Bridge.jl</code> is mostly concerned with stochastic differential equations, but we can also solve ordinary differiential equations
+$$
+\frac{d}{dt} x(t) = F(t, x(t)).
+$$</p>
+
+<p>As a stochastic differential equation can be seen as ordinary differential equation with noise, let&rsquo;s start with an ordinary one and add noise in a second step.</p>
+
+<p>The Lorenz system is famous and nice looking 3d system of ordinary differential equations.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">F(t, x, s <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">10.0</span>, ρ <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">28.0</span>, β <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">8</span><span style="color:#333">/</span><span style="color:#00d;font-weight:bold">3</span>) <span style="color:#333">=</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(s<span style="color:#333">*</span>(x[<span style="color:#00d;font-weight:bold">2</span>] <span style="color:#333">-</span> x[<span style="color:#00d;font-weight:bold">1</span>]), x[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">*</span>(ρ <span style="color:#333">-</span> x[<span style="color:#00d;font-weight:bold">3</span>]) <span style="color:#333">-</span> x[<span style="color:#00d;font-weight:bold">2</span>], x[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">*</span>x[<span style="color:#00d;font-weight:bold">2</span>] <span style="color:#333">-</span> β<span style="color:#333">*</span>x[<span style="color:#00d;font-weight:bold">3</span>])
+x0 <span style="color:#333">=</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(<span style="color:#60e;font-weight:bold">1.508870</span>, <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">1.531271</span>, <span style="color:#60e;font-weight:bold">25.46091</span>)
+;</code></pre></div>
+<p>Note that $F(t, x)$ returns a 3d vector, we have written the Lorenz system as vector valued differential equation.</p>
+
+<p>$s$, $\rho$ and $\beta$ are parameters governing the system. With following parameters chosen by Lorenz the system shows chaotic behaviour:</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">s0 <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10</span>
+ρ0 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">28.0</span>
+β0 <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">8</span><span style="color:#333">/</span><span style="color:#00d;font-weight:bold">3</span>
+θ0 <span style="color:#333">=</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(s0, ρ0, β0)
+;</code></pre></div>
+<p>Compute a solution with
+<code>solve</code>. The argument <code>BS3()</code> tells <code>solve</code> to use an order 3 Bogacki–Shampine method.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">U, err <span style="color:#333">=</span> solve(BS3(), tt, x0, (F,))
+round(err,<span style="color:#00d;font-weight:bold">5</span>)</code></pre></div>
+<p>0.00077</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#555;font-weight:bold">@time</span> solve!(BS3(), U, x0, (F,))</code></pre></div>
+<pre><code>  0.000463 seconds (5 allocations: 192 bytes)
+
+
+
+
+
+(Bridge.SamplePath{SVector{3,Float64}}([0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004, 0.0045  …  4.9955, 4.996, 4.9965, 4.997, 4.9975, 4.998, 4.9985, 4.999, 4.9995, 5.0], SVector{3,Float64}[[1.50887, -1.53127, 25.4609], [1.49371, -1.52859, 25.4258], [1.47865, -1.5259, 25.3908], [1.46367, -1.5232, 25.3559], [1.44878, -1.5205, 25.321], [1.43398, -1.5178, 25.2861], [1.41926, -1.5151, 25.2514], [1.40463, -1.51239, 25.2167], [1.39009, -1.50967, 25.182], [1.37563, -1.50696, 25.1474]  …  [0.50237, 0.918763, 9.50489], [0.504457, 0.922959, 9.49246], [0.506555, 0.927176, 9.48004], [0.508663, 0.931413, 9.46764], [0.510782, 0.935671, 9.45527], [0.512912, 0.93995, 9.44291], [0.515053, 0.94425, 9.43057], [0.517204, 0.94857, 9.41825], [0.519366, 0.952912, 9.40594], [0.52154, 0.957274, 9.39366]]), 0.000768832133378928)
+</code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 2: Solution of the Lorenz system</span>
+
+scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">200</span>, <span style="color:#00d;font-weight:bold">200</span>))
+lines(U, linewidth <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.8</span>, color <span style="color:#333">=</span> viridis(n))
+scatter([U<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.4</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>))
+center!(scene)
+set_perspective!(scene, perspective)</code></pre></div>
+<p><em>Figure 2.</em> A solution of the deterministic Lorenz system.</p>
+
+<h2 id="stochastic-lorenz-system">Stochastic Lorenz system</h2>
+
+<p>A corresponding stochastic differential equation has the following form
+$$
+    \frac{d}{dt} X(t) = F(t, X(t)) + \sigma(t,X(t)) W(t).
+$$
+For the example, we choose $\sigma = 5I$.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">σ <span style="color:#333">=</span> (t,x)<span style="color:#333">-&gt;</span><span style="color:#00d;font-weight:bold">5</span><span style="color:#007020">I</span>
+X <span style="color:#333">=</span> solve(EulerMaruyama(), x0, W, (F, σ))
+;</code></pre></div>
+<p>As the driving Brownian motion path provides a set of time points <code>W.tt</code>, the argument <code>tt</code> is dropped. <code>solve</code> has also an in-place version <code>solve!</code>.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#555;font-weight:bold">@time</span> solve!(EulerMaruyama(), X, x0, W, (F, σ));</code></pre></div>
+<p>Note the solver is quite efficient.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 3: Sample path</span>
+
+scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">200</span>, <span style="color:#00d;font-weight:bold">200</span>))
+lines(X, linewidth <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.5</span>, color <span style="color:#333">=</span> viridis(n))
+scatter([X<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.09</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>))
+center!(scene)
+set_perspective!(scene, perspective)</code></pre></div>
+<p><em>Figure 3.</em> Sample of the solution of the stochastic Lorenz system.</p>
+
+<h2 id="parameter-inference-for-the-stochastic-lorenz-system">Parameter inference for the stochastic Lorenz system</h2>
+
+<p>The likelihood for the parameter $\theta = (s, \rho, \beta)$ is given by Girsanov&rsquo;s theorem.
+The stochastic Lorenz system is defined in <code>Bridge.Model</code> and takes a parameter triple <code>θ</code>.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">function</span> loglikelihood(θ, θref, X) 
+    P <span style="color:#333">=</span> Lorenz(θ, SDiagonal(<span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>))
+    Pref <span style="color:#333">=</span> Lorenz(θref, SDiagonal(<span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>)) <span style="color:#888"># Reference measure</span>
+    girsanov(X, P, Pref)
+<span style="color:#080;font-weight:bold">end</span></code></pre></div>
+<p>Choose a reference measure. We only estimate <code>ρ</code> and <code>β</code>.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">θref <span style="color:#333">=</span> s0, Ρ[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>], Β[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>] 
+<span style="color:#555;font-weight:bold">@show</span> θref;</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">S <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">9.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.05</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">11.0</span>
+Ρ <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">26</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.05</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">30</span>
+Β <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">2.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.02</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">4.0</span>
+llsurface <span style="color:#333">=</span> [loglikelihood((s0, ρ, β), θref, X) <span style="color:#080;font-weight:bold">for</span> ρ <span style="color:#038;font-weight:bold">in</span> Ρ, β <span style="color:#038;font-weight:bold">in</span> Β];</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 4: Likelihood surface</span>
+
+scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">200</span>, <span style="color:#00d;font-weight:bold">200</span>))
+llsurfaces <span style="color:#333">=</span> (llsurface <span style="color:#333">-</span> mean(llsurface))<span style="color:#333">/</span>std(llsurface)
+llsurfaces0 <span style="color:#333">=</span> llsurfaces[first(searchsorted(Ρ,ρ0)), first(searchsorted(Β,β0))]
+surface(Ρ, Β, llsurfaces, colormap <span style="color:#333">=</span> <span style="color:#333">:</span>Spectral)
+
+l <span style="color:#333">=</span> Point3f0(ρ0, β0, <span style="color:#60e;font-weight:bold">0.0</span>)
+u <span style="color:#333">=</span> Point3f0(ρ0, β0, <span style="color:#60e;font-weight:bold">1.2</span><span style="color:#333">*</span>llsurfaces0)
+lines(Point3f0[l,(u<span style="color:#333">+</span><span style="color:#00d;font-weight:bold">2</span>l)<span style="color:#333">/</span><span style="color:#00d;font-weight:bold">3</span>, (<span style="color:#00d;font-weight:bold">2</span>u<span style="color:#333">+</span>l)<span style="color:#333">/</span><span style="color:#00d;font-weight:bold">3</span>, u], linewidth<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">3.5</span>, color<span style="color:#333">=:</span>darkred)
+
+i,j <span style="color:#333">=</span> ind2sub(size(llsurfaces),indmax(llsurfaces))
+scatter([Point3f0(Ρ[i],Β[j], maximum(llsurfaces))], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.1</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> <span style="color:#333">:</span>white)
+axis(Ρ[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Ρ[<span style="color:#080;font-weight:bold">end</span>], Β[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Β[<span style="color:#080;font-weight:bold">end</span>], minimum(llsurfaces)<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>maximum(llsurfaces))
+center!(scene)
+set_perspective!(scene, <span style="color:#339;font-weight:bold">Float32</span>[<span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.7788</span> <span style="color:#60e;font-weight:bold">0.6272</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">20.1757</span>; <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.3824</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.4748</span> <span style="color:#60e;font-weight:bold">0.7926</span> <span style="color:#60e;font-weight:bold">13.1915</span>; <span style="color:#60e;font-weight:bold">0.4972</span> <span style="color:#60e;font-weight:bold">0.6173</span> <span style="color:#60e;font-weight:bold">0.6097</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">23.9617</span>; <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">1.0</span>])</code></pre></div>
+<p><em>Figure 4</em>. (Log-) likelihood surface. A line marks the true parameter value, a circle the maximum likelihood estimate</p>
+
+<h2 id="markov-chain-monte-carlo">Markov chain Monte Carlo</h2>
+
+<p>In my work I am interested in Bayesian methods for inference for stochastic differential equations.
+To compute the posterior distribution of the parameters on naturally employes Markov Chain Monte Carlo (MCMC) methods.</p>
+
+<p>Julia is a very good match for MCMC computations: They are sequential and cannot be vectorized. In programming languages with slow loops this is a problem and probabilistic programming libraries are used.
+For Julia, those too exists, but we may also just stay with Julia.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"></code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># MCMC sampler</span>
+
+logπ(s, ρ, β) <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">1.0</span>
+<span style="color:#080;font-weight:bold">function</span> mcmc(X, logπ, θstart, θref; iterations <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10000</span>)
+    θ <span style="color:#333">=</span> θstart
+    Θ <span style="color:#333">=</span> [θ]
+    ll <span style="color:#333">=</span> <span style="color:#333">-</span><span style="color:#007020">Inf</span>
+    lπ <span style="color:#333">=</span> logπ(θ<span style="color:#333">...</span>)
+    <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span>iterations
+        θᵒ <span style="color:#333">=</span> θ <span style="color:#333">+</span> <span style="color:#60e;font-weight:bold">0.1</span><span style="color:#333">*</span>randn(ℝ{<span style="color:#00d;font-weight:bold">3</span>})
+        lπᵒ <span style="color:#333">=</span> logπ(θᵒ<span style="color:#333">...</span>)
+        llᵒ <span style="color:#333">=</span> loglikelihood(θᵒ, θref, X)
+        <span style="color:#080;font-weight:bold">if</span> rand() <span style="color:#333">&lt;</span> exp(llᵒ <span style="color:#333">-</span> ll <span style="color:#333">+</span> lπᵒ <span style="color:#333">-</span> lπ)
+            θ, lπ, ll <span style="color:#333">=</span> θᵒ, lπᵒ, llᵒ 
+        <span style="color:#080;font-weight:bold">end</span>
+        push!(Θ, θ)
+    <span style="color:#080;font-weight:bold">end</span>
+    Θ
+<span style="color:#080;font-weight:bold">end</span>
+
+<span style="color:#888"># MCMC experiment</span>
+
+θref <span style="color:#333">=</span> S[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>], Ρ[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>], Β[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>] 
+<span style="color:#555;font-weight:bold">@time</span> Θ <span style="color:#333">=</span> mcmc(X, logπ, ℝ{<span style="color:#00d;font-weight:bold">3</span>}(<span style="color:#60e;font-weight:bold">9.</span>,<span style="color:#60e;font-weight:bold">30.</span>,<span style="color:#60e;font-weight:bold">2.0</span>), θref; iterations <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10000</span>)
+<span style="color:#555;font-weight:bold">@show</span> mean(Θ)
+<span style="color:#555;font-weight:bold">@show</span> θ0
+;</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 5: Traceplot</span>
+
+scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">300</span>, <span style="color:#00d;font-weight:bold">300</span>))
+Θs <span style="color:#333">=</span> [Point3f0(Θ[i]<span style="color:#333">+</span><span style="color:#60e;font-weight:bold">0.01</span>randn(ℝ{<span style="color:#00d;font-weight:bold">3</span>})) <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">1000</span>] <span style="color:#888"># subsample</span>
+scatter(Θs, markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.02</span>, marker <span style="color:#333">=</span> circle, color<span style="color:#333">=</span>RGBA(<span style="color:#60e;font-weight:bold">0.0</span>, <span style="color:#60e;font-weight:bold">0.0</span>, <span style="color:#60e;font-weight:bold">0.5</span>, <span style="color:#60e;font-weight:bold">0.3</span>) )
+lines(Θs, linewidth<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.5</span>, color<span style="color:#333">=</span>RGBA(<span style="color:#60e;font-weight:bold">0.0</span>, <span style="color:#60e;font-weight:bold">0.0</span>, <span style="color:#60e;font-weight:bold">0.5</span>, <span style="color:#60e;font-weight:bold">0.3</span>) )
+<span style="color:#888">#lines(Θ[end-10000:10:end], linewidth=0.2, color=:black)</span>
+
+<span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">3</span>
+    p <span style="color:#333">=</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(ntuple(n<span style="color:#333">-&gt;</span>n!<span style="color:#333">=</span>i,<span style="color:#00d;font-weight:bold">3</span>))
+    lines([Θs[i]<span style="color:#333">.*</span>p <span style="color:#333">.+</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(S[<span style="color:#00d;font-weight:bold">1</span>],Ρ[<span style="color:#00d;font-weight:bold">1</span>],Β[<span style="color:#00d;font-weight:bold">1</span>])<span style="color:#333">.*</span>(<span style="color:#00d;font-weight:bold">1</span> <span style="color:#333">.-</span> p) <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span>length(Θs)], 
+        linewidth<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.4</span>, color<span style="color:#333">=</span>RGB(<span style="color:#60e;font-weight:bold">0.6</span>,<span style="color:#60e;font-weight:bold">0.7</span>,<span style="color:#60e;font-weight:bold">0.8</span>) )
+<span style="color:#080;font-weight:bold">end</span>
+scatter([ℝ{<span style="color:#00d;font-weight:bold">3</span>}(s0, ρ0, β0)], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.1</span>, marker <span style="color:#333">=</span> <span style="color:#04d;background-color:#fff0f0">&#39;+&#39;</span>, color <span style="color:#333">=</span> <span style="color:#333">:</span>darkred)
+Ps <span style="color:#333">=</span> [ℝ{<span style="color:#00d;font-weight:bold">3</span>}(ntuple(n<span style="color:#333">-&gt;</span>n!<span style="color:#333">=</span>i,<span style="color:#00d;font-weight:bold">3</span>)) <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">3</span>]
+scatter([ℝ{<span style="color:#00d;font-weight:bold">3</span>}(s0, ρ0, β0)<span style="color:#333">.*</span>p  <span style="color:#333">.+</span> ℝ{<span style="color:#00d;font-weight:bold">3</span>}(S[<span style="color:#00d;font-weight:bold">1</span>],Ρ[<span style="color:#00d;font-weight:bold">1</span>],Β[<span style="color:#00d;font-weight:bold">1</span>])<span style="color:#333">.*</span>(<span style="color:#00d;font-weight:bold">1</span> <span style="color:#333">.-</span> p) <span style="color:#080;font-weight:bold">for</span> p <span style="color:#038;font-weight:bold">in</span> Ps], 
+    markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.08</span>, marker <span style="color:#333">=</span> <span style="color:#04d;background-color:#fff0f0">&#39;+&#39;</span>, color <span style="color:#333">=</span> RGB(<span style="color:#60e;font-weight:bold">0.8</span>,<span style="color:#60e;font-weight:bold">0.5</span>,<span style="color:#60e;font-weight:bold">0.5</span>))
+axis(<span style="color:#60e;font-weight:bold">8.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">12.0</span>, Ρ[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Ρ[<span style="color:#080;font-weight:bold">end</span>], Β[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Β[<span style="color:#080;font-weight:bold">end</span>])
+
+
+center!(scene)</code></pre></div>
+<p><em>Figure 5.</em> Samples of the MCMC chain for the posterior distribution (black) and true value (red). Projections on the $s$-$\rho$-plane, the $\rho$-$\beta$-plane and the $\beta$-$s$-plane in gray, gray-red.</p>
+
+</main>
+
+  <footer>
+  
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+  </footer>
+  </body>
+</html>
+
