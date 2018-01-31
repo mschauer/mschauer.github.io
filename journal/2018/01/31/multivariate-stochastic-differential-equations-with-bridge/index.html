@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Multivariate stochastic differential equations with **Bridge** | Journal</title>
+    <title>Multivariate stochastic differential equations with Bridge | Journal</title>
     <link rel="stylesheet" href="../../../../css/style.css" />
     <link rel="stylesheet" href="../../../../css/fonts.css" />
     
@@ -18,7 +18,7 @@
     </nav>
 
 <div class="article-meta">
-<h1><span class="title">Multivariate stochastic differential equations with **Bridge**</span></h1>
+<h1><span class="title">Multivariate stochastic differential equations with Bridge</span></h1>
 
 <h2 class="date">2018/01/31</h2>
 </div>
@@ -39,10 +39,6 @@
 
 <p>The next few lines load the needed packages and some scripts.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> Bridge, StaticArrays, Makie, Bridge<span style="color:#333">.</span>Models, Colors, GeometryTypes</code></pre></div>
-<pre><code>[1m[36mINFO: [39m[22m[36mRecompiling stale cache file /Users/schauermr/.julia/lib/v0.6/Bridge.ji for module Bridge.
-[39m
-</code></pre>
-
 <div id="interact-js-shim">
     <script charset="utf-8">
 (function (IPython, $, _, MathJax) {
@@ -197,6 +193,8 @@ scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333
 lines(W, linewidth <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.5</span>, color <span style="color:#333">=</span> viridis(n))
 scatter([W<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.09</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>)) <span style="color:#888"># starting point</span>
 center!(scene)</code></pre></div>
+<p><img src="../../../../../img/output_18_0.png" alt="png" /></p>
+
 <p><em>Figure 1.</em> Brownian motion in 3d. Colors indicate progress of time.</p>
 
 <h2 id="lorenz-system-of-ordinary-differential-equations">Lorenz system of ordinary differential equations</h2>
@@ -222,17 +220,12 @@ x0 <span style="color:#333">=</span> ℝ{<span style="color:#00d;font-weight:bol
 ;</code></pre></div>
 <p>Compute a solution with
 <code>solve</code>. The argument <code>BS3()</code> tells <code>solve</code> to use an order 3 Bogacki–Shampine method.</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">U, err <span style="color:#333">=</span> solve(BS3(), tt, x0, (F,))
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">U, err <span style="color:#333">=</span> solve(BS3(), tt, x0, F)
 round(err,<span style="color:#00d;font-weight:bold">5</span>)</code></pre></div>
 <p>0.00077</p>
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#555;font-weight:bold">@time</span> solve!(BS3(), U, x0, (F,))</code></pre></div>
-<pre><code>  0.000463 seconds (5 allocations: 192 bytes)
-
-
-
-
-
-(Bridge.SamplePath{SVector{3,Float64}}([0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004, 0.0045  …  4.9955, 4.996, 4.9965, 4.997, 4.9975, 4.998, 4.9985, 4.999, 4.9995, 5.0], SVector{3,Float64}[[1.50887, -1.53127, 25.4609], [1.49371, -1.52859, 25.4258], [1.47865, -1.5259, 25.3908], [1.46367, -1.5232, 25.3559], [1.44878, -1.5205, 25.321], [1.43398, -1.5178, 25.2861], [1.41926, -1.5151, 25.2514], [1.40463, -1.51239, 25.2167], [1.39009, -1.50967, 25.182], [1.37563, -1.50696, 25.1474]  …  [0.50237, 0.918763, 9.50489], [0.504457, 0.922959, 9.49246], [0.506555, 0.927176, 9.48004], [0.508663, 0.931413, 9.46764], [0.510782, 0.935671, 9.45527], [0.512912, 0.93995, 9.44291], [0.515053, 0.94425, 9.43057], [0.517204, 0.94857, 9.41825], [0.519366, 0.952912, 9.40594], [0.52154, 0.957274, 9.39366]]), 0.000768832133378928)
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">F2(t,x,_) <span style="color:#333">=</span> F(t,x)
+solve!(BS3(), F2, U, x0, <span style="color:#007020">nothing</span>)</code></pre></div>
+<pre><code>(Bridge.SamplePath{SVector{3,Float64}}([0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.004, 0.0045  …  4.9955, 4.996, 4.9965, 4.997, 4.9975, 4.998, 4.9985, 4.999, 4.9995, 5.0], SVector{3,Float64}[[1.50887, -1.53127, 25.4609], [1.49371, -1.52859, 25.4258], [1.47865, -1.5259, 25.3908], [1.46367, -1.5232, 25.3559], [1.44878, -1.5205, 25.321], [1.43398, -1.5178, 25.2861], [1.41926, -1.5151, 25.2514], [1.40463, -1.51239, 25.2167], [1.39009, -1.50967, 25.182], [1.37563, -1.50696, 25.1474]  …  [0.50237, 0.918763, 9.50489], [0.504457, 0.922959, 9.49246], [0.506555, 0.927176, 9.48004], [0.508663, 0.931413, 9.46764], [0.510782, 0.935671, 9.45527], [0.512912, 0.93995, 9.44291], [0.515053, 0.94425, 9.43057], [0.517204, 0.94857, 9.41825], [0.519366, 0.952912, 9.40594], [0.52154, 0.957274, 9.39366]]), 0.000768832133378928)
 </code></pre>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 2: Solution of the Lorenz system</span>
 
@@ -241,6 +234,8 @@ lines(U, linewidth <span style="color:#333">=</span> <span style="color:#60e;fon
 scatter([U<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.4</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>))
 center!(scene)
 set_perspective!(scene, perspective)</code></pre></div>
+<p><img src="../../../../../img/output_27_0.png" alt="png" /></p>
+
 <p><em>Figure 2.</em> A solution of the deterministic Lorenz system.</p>
 
 <h2 id="stochastic-lorenz-system">Stochastic Lorenz system</h2>
@@ -255,6 +250,9 @@ X <span style="color:#333">=</span> solve(EulerMaruyama(), x0, W, (F, σ))
 ;</code></pre></div>
 <p>As the driving Brownian motion path provides a set of time points <code>W.tt</code>, the argument <code>tt</code> is dropped. <code>solve</code> has also an in-place version <code>solve!</code>.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#555;font-weight:bold">@time</span> solve!(EulerMaruyama(), X, x0, W, (F, σ));</code></pre></div>
+<pre><code>  0.000367 seconds (4 allocations: 160 bytes)
+</code></pre>
+
 <p>Note the solver is quite efficient.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 3: Sample path</span>
 
@@ -263,6 +261,8 @@ lines(X, linewidth <span style="color:#333">=</span> <span style="color:#60e;fon
 scatter([X<span style="color:#333">.</span>yy[<span style="color:#00d;font-weight:bold">1</span>]], markersize<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.09</span>, marker <span style="color:#333">=</span> circle, color <span style="color:#333">=</span> viridis(<span style="color:#00d;font-weight:bold">1</span>))
 center!(scene)
 set_perspective!(scene, perspective)</code></pre></div>
+<p><img src="../../../../../img/output_34_0.png" alt="png" /></p>
+
 <p><em>Figure 3.</em> Sample of the solution of the stochastic Lorenz system.</p>
 
 <h2 id="parameter-inference-for-the-stochastic-lorenz-system">Parameter inference for the stochastic Lorenz system</h2>
@@ -274,9 +274,15 @@ The stochastic Lorenz system is defined in <code>Bridge.Model</code> and takes a
     Pref <span style="color:#333">=</span> Lorenz(θref, SDiagonal(<span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>, <span style="color:#60e;font-weight:bold">5.0</span>)) <span style="color:#888"># Reference measure</span>
     girsanov(X, P, Pref)
 <span style="color:#080;font-weight:bold">end</span></code></pre></div>
+<pre><code>loglikelihood (generic function with 1 method)
+</code></pre>
+
 <p>Choose a reference measure. We only estimate <code>ρ</code> and <code>β</code>.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">θref <span style="color:#333">=</span> s0, Ρ[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>], Β[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span>] 
-<span style="color:#555;font-weight:bold">@show</span> θref;</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">S <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">9.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.05</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">11.0</span>
+<span style="color:#555;font-weight:bold">@show</span> θref;</code></pre></div>
+<pre><code>θref = (10, 27.95, 2.98)
+</code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">S <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">9.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.05</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">11.0</span>
 Ρ <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">26</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.05</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">30</span>
 Β <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">2.0</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">0.02</span><span style="color:#333">:</span><span style="color:#60e;font-weight:bold">4.0</span>
 llsurface <span style="color:#333">=</span> [loglikelihood((s0, ρ, β), θref, X) <span style="color:#080;font-weight:bold">for</span> ρ <span style="color:#038;font-weight:bold">in</span> Ρ, β <span style="color:#038;font-weight:bold">in</span> Β];</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 4: Likelihood surface</span>
@@ -295,6 +301,8 @@ scatter([Point3f0(Ρ[i],Β[j], maximum(llsurfaces))], markersize<span style="col
 axis(Ρ[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Ρ[<span style="color:#080;font-weight:bold">end</span>], Β[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>Β[<span style="color:#080;font-weight:bold">end</span>], minimum(llsurfaces)<span style="color:#333">:</span><span style="color:#60e;font-weight:bold">1.0</span><span style="color:#333">:</span>maximum(llsurfaces))
 center!(scene)
 set_perspective!(scene, <span style="color:#339;font-weight:bold">Float32</span>[<span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.7788</span> <span style="color:#60e;font-weight:bold">0.6272</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">20.1757</span>; <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.3824</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.4748</span> <span style="color:#60e;font-weight:bold">0.7926</span> <span style="color:#60e;font-weight:bold">13.1915</span>; <span style="color:#60e;font-weight:bold">0.4972</span> <span style="color:#60e;font-weight:bold">0.6173</span> <span style="color:#60e;font-weight:bold">0.6097</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">23.9617</span>; <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">0.0</span> <span style="color:#60e;font-weight:bold">1.0</span>])</code></pre></div>
+<p><img src="../../../../../img/output_41_0.png" alt="png" /></p>
+
 <p><em>Figure 4</em>. (Log-) likelihood surface. A line marks the true parameter value, a circle the maximum likelihood estimate</p>
 
 <h2 id="markov-chain-monte-carlo">Markov chain Monte Carlo</h2>
@@ -330,7 +338,12 @@ logπ(s, ρ, β) <span style="color:#333">=</span> <span style="color:#60e;font-
 <span style="color:#555;font-weight:bold">@time</span> Θ <span style="color:#333">=</span> mcmc(X, logπ, ℝ{<span style="color:#00d;font-weight:bold">3</span>}(<span style="color:#60e;font-weight:bold">9.</span>,<span style="color:#60e;font-weight:bold">30.</span>,<span style="color:#60e;font-weight:bold">2.0</span>), θref; iterations <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10000</span>)
 <span style="color:#555;font-weight:bold">@show</span> mean(Θ)
 <span style="color:#555;font-weight:bold">@show</span> θ0
-;</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 5: Traceplot</span>
+;</code></pre></div>
+<pre><code>  9.618450 seconds (120.96 k allocations: 4.632 MiB, 0.80% gc time)
+mean(Θ) = [11.0041, 28.0243, 2.71512]
+θ0 = [10.0, 28.0, 2.66667]
+</code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># Figure 5: Traceplot</span>
 
 scene <span style="color:#333">=</span> Scene(resolution <span style="color:#333">=</span> (<span style="color:#00d;font-weight:bold">300</span>, <span style="color:#00d;font-weight:bold">300</span>))
 Θs <span style="color:#333">=</span> [Point3f0(Θ[i]<span style="color:#333">+</span><span style="color:#60e;font-weight:bold">0.01</span>randn(ℝ{<span style="color:#00d;font-weight:bold">3</span>})) <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">1000</span>] <span style="color:#888"># subsample</span>
@@ -351,6 +364,8 @@ axis(<span style="color:#60e;font-weight:bold">8.0</span><span style="color:#333
 
 
 center!(scene)</code></pre></div>
+<p><img src="../../../../../img/output_46_0.png" alt="png" /></p>
+
 <p><em>Figure 5.</em> Samples of the MCMC chain for the posterior distribution (black) and true value (red). Projections on the $s$-$\rho$-plane, the $\rho$-$\beta$-plane and the $\beta$-$s$-plane in gray, gray-red.</p>
 
 </main>
