@@ -12,12 +12,12 @@
     
     
     <item>
-      <title>Multivariate stochastic differential equations with **Bridge**</title>
+      <title>Multivariate stochastic differential equations with Bridge</title>
       <link>http://mschauer.eu/journal/2018/01/31/multivariate-stochastic-differential-equations-with-bridge/</link>
       <pubDate>Wed, 31 Jan 2018 09:00:00 +0100</pubDate>
       
       <guid>http://mschauer.eu/journal/2018/01/31/multivariate-stochastic-differential-equations-with-bridge/</guid>
-      <description>This IJulia script converted blog-post gives a tour for my package Bridge with focus on multivariate stochastic differential equations. I use Makie.jl for the visualisations.
+      <description>This IJulia script converted blog-post gives a tour for my package Bridge with focus on multivariate stochastic differential equations. I use Makie.jl for the visualisations. The notebook is online at https://github.com/mschauer/Bridge.jl/blob/master/example/3DExamples.ipynb .
 Installation To run this IJulia script install Bridge and checkout the master branch to run.
 # Pkg.add(&amp;#34;Bridge&amp;#34;) # Pkg.checkout(&amp;#34;Bridge&amp;#34;) The installation of Makie is a bit tricky and is detailed in the README.md file of Makie.
 Setting the scene The next few lines load the needed packages and some scripts.</description>
@@ -30,6 +30,7 @@ Setting the scene The next few lines load the needed packages and some scripts.<
       
       <guid>http://mschauer.eu/journal/2018/01/19/parameter-inference-for-a-simple-sir-model/</guid>
       <description>Introduction Mathieu Besançon made a nice blog post on Chris&amp;rsquo; DifferentialEquations ecosystem, https://mbesancon.github.io/post/2017-12-14-diffeq-julia/ .
+The notebook is online at https://gist.github.com/mschauer/9da19ea563d072cb683aba80ab61efb4 .
 One of the examples is simple model tracking individuals in a population with three states $S$, $I$, $R$.
 Let $u = (u_1, u_2, u_2)$ be the vector of individuals in these states.
  At any moment an individual of state $A$ can convince a individual of state $B$ to join the fraction $A$ $$ S,I \mapsto 2I $$ This reaction happens proportional to the number of possible pairs $A, B$ which can match up, so proportional to $u_1 u_2$ with proportionality constant $\alpha$.</description>
