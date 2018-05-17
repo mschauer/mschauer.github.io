@@ -56,7 +56,7 @@
 
 <p>The estimation methodology is intuitive to understand, given that its ingredients are well-known statistical techniques. The posterior inference is performed via the Gibbs sampler, with the Forward Filtering Backward Simulation algorithm used to reconstruct unobservable states $X(t_i)$. This relies on the Kalman filter. The unknown squared volatility function is a priori modelled as piecewise constant and is assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function. Next to yielding point estimates (e.g. the posterior mean), the method conducts automatic uncertainty quantification via marginal credible bands.</p>
 
-<p>###Setup</p>
+<h3 id="setup">Setup</h3>
 
 <p>Install <code>MicrostructureNoise</code> via the package manager.</p>
 
@@ -66,7 +66,7 @@
 <p>Then load the packages below.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> MicrostructureNoise, Distributions, Plots
 srand(<span style="color:#00d;font-weight:bold">12</span>);</code></pre></div>
-<p>##Real data example</p>
+<h2 id="real-data-example">Real data example</h2>
 
 <p>As a first example, we apply our methodology to infer volatility of the high frequency foreign exchange rate data made available by Pepperstone Limited, the London based forex broker (<a href="https://pepperstone.com/uk/client-resources/historical-tick-data">https://pepperstone.com/uk/client-resources/historical-tick-data</a>). Specifically, we use the EUR/USD tick data (bid prices) for 2 March 2015. We retrieve, log-transform and subsample the data and express time in milliseconds.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># uncomment if you do not mind to create this large file </span>
@@ -78,7 +78,7 @@ t <span style="color:#333">=</span> <span style="color:#339;font-weight:bold">Fl
 n <span style="color:#333">=</span> length(t)<span style="color:#333">-</span><span style="color:#00d;font-weight:bold">1</span>
 T <span style="color:#333">=</span> t[<span style="color:#080;font-weight:bold">end</span>]
 y <span style="color:#333">=</span> log<span style="color:#333">.</span>(<span style="color:#339;font-weight:bold">Float64</span><span style="color:#333">.</span>(dat[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">130260</span>, <span style="color:#00d;font-weight:bold">3</span>]));</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">plot(t[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>], y[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>], label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;EUR/USD&#34;</span>)</code></pre></div>
-<p><img src="output_5_0.svg" alt="svg" /></p>
+<p><img src="../../../../MicrostructureNoise/output_5_0.svg" alt="svg" /></p>
 
 <p>The prior specification is done via the <code>Prior</code> struct.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">prior <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>Prior(
@@ -129,13 +129,13 @@ plot!(MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<sp
     alpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
     fillcolor<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;blue&#34;</span>,
     title<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;Volatility estimate&#34;</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;marginal </span><span style="background-color:#eee">$</span>(round(<span style="color:#339;font-weight:bold">Int</span>,posterior<span style="color:#333">.</span>qu<span style="color:#333">*</span><span style="color:#00d;font-weight:bold">100</span>))<span style="background-color:#eee">% c</span><span style="background-color:#fff0f0">redibility band&#34;</span>)</code></pre></div>
-<p><img src="output_12_0.svg" alt="svg" /></p>
+<p><img src="../../../../MicrostructureNoise/output_12_0.svg" alt="svg" /></p>
 
 <p>A histogram of <code>sqrt.(ηs)</code> visualises the posterior of the observation error <code>η</code>, indicating that there is indeed a non-negligible microstructure noise.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">histogram(sqrt<span style="color:#333">.</span>(ηs[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]), nbins<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">20</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;eta&#34;</span>)</code></pre></div>
-<p><img src="output_14_0.svg" alt="svg" /></p>
+<p><img src="../../../../MicrostructureNoise/output_14_0.svg" alt="svg" /></p>
 
-<p>##How good does it work: Test with the Heston model</p>
+<h2 id="how-good-does-it-work-test-with-the-heston-model">How good does it work: Test with the Heston model</h2>
 
 <p>In order to test our model, we simulate the a trajectory of an asset with the Heston model (<a href="https://en.wikipedia.org/wiki/Heston_model">https://en.wikipedia.org/wiki/Heston_model</a>).</p>
 
@@ -151,7 +151,7 @@ Here $W$ and $B$ are correlated Wiener processes with correlation $\rho$.</p>
 
 <p>For this generated asset price trajectory we can compare our estimates from noisy discrete data with the true volatility known from the simulation.</p>
 
-<p>###Generate data from the Heston model</p>
+<h3 id="generate-data-from-the-heston-model">Generate data from the Heston model</h3>
 
 <p>To define the model in Julia and to simulate the trajectory use the package <code>Bridge</code>.
 Install it via the package manager.</p>
@@ -206,7 +206,7 @@ y <span style="color:#333">=</span> copy(xtrue)
 
 η0 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.005</span><span style="color:#333">^</span><span style="color:#00d;font-weight:bold">2</span>
 y <span style="color:#333">.+=</span> randn(n <span style="color:#333">+</span> <span style="color:#00d;font-weight:bold">1</span>) <span style="color:#333">*</span> sqrt(η0);</code></pre></div>
-<p>###Perform inference using <code>MicrostructureNoise</code>.</p>
+<h3 id="perform-inference-using-microstructurenoise">Perform inference using <code>MicrostructureNoise</code>.</h3>
 
 <p>This proceeds along the same lines as before.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">α <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">5.0</span> <span style="color:#888"># Initial smoothness hyperparameter guess</span>
@@ -251,7 +251,7 @@ plot!(MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<sp
     alpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
     fillcolor<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;darkblue&#34;</span>,
     title<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;Volatility estimate&#34;</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;marginal </span><span style="background-color:#eee">$</span>(round(<span style="color:#339;font-weight:bold">Int</span>,posterior<span style="color:#333">.</span>qu<span style="color:#333">*</span><span style="color:#00d;font-weight:bold">100</span>))<span style="background-color:#eee">% c</span><span style="background-color:#fff0f0">redibility band&#34;</span>)</code></pre></div>
-<p><img src="output_30_0.svg" alt="svg" /></p>
+<p><img src="../../../../MicrostructureNoise/output_30_0.svg" alt="svg" /></p>
 
 <p>The greyish band mostly covers the red curve, the true volatility.</p>
 
@@ -261,7 +261,7 @@ erroneous observations.</p>
 
 <p>A histogram confirms that also the estimate of the observations noise is good.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">histogram(sqrt<span style="color:#333">.</span>(ηs[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]), nbins<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">20</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;eta&#34;</span>)</code></pre></div>
-<p><img src="output_32_0.svg" alt="svg" /></p>
+<p><img src="../../../../MicrostructureNoise/output_32_0.svg" alt="svg" /></p>
 
 <h2 id="references">References</h2>
 
