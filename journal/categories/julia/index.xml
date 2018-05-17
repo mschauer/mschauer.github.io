@@ -6,10 +6,22 @@
     <description>Recent content in Julia on Journal</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 31 Jan 2018 09:00:00 +0100</lastBuildDate>
+    <lastBuildDate>Thu, 17 May 2018 18:15:18 +0200</lastBuildDate>
     
 	<atom:link href="http://mschauer.eu/journal/categories/julia/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MicrostructureNoise</title>
+      <link>http://mschauer.eu/journal/2018/05/17/microstructurenoise/</link>
+      <pubDate>Thu, 17 May 2018 18:15:18 +0200</pubDate>
+      
+      <guid>http://mschauer.eu/journal/2018/05/17/microstructurenoise/</guid>
+      <description>Introduction (Available as Jupyter notebook at https://github.com/mschauer/MicrostructureNoise.jl/blob/master/example/MicrostructureNoise.ipynb)
+MicrostructureNoise is a Julia package for Bayesian volatility estimation in presence of market microstructure noise implementing the methodology described in our new preprint:
+ Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. arxiv:1805.05606, 2018.  This blogpost gives a short introduction.
+Description MicrostructureNoise estimates the volatility function $s$ of the stochastic differential equation</description>
+    </item>
     
     <item>
       <title>Multivariate stochastic differential equations with Bridge</title>

@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://mschauer.eu/journal/2018/05/17/microstructurenoise/</loc>
+    <lastmod>2018-05-17T18:15:18+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://mschauer.eu/journal/2018/01/31/multivariate-stochastic-differential-equations-with-bridge/</loc>
     <lastmod>2018-01-31T09:00:00+01:00</lastmod>
   </url>
@@ -19,19 +24,19 @@
   
   <url>
     <loc>http://mschauer.eu/journal/</loc>
-    <lastmod>2018-01-31T09:00:00+01:00</lastmod>
+    <lastmod>2018-05-17T18:15:18+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://mschauer.eu/journal/categories/julia/</loc>
-    <lastmod>2018-01-31T09:00:00+01:00</lastmod>
+    <lastmod>2018-05-17T18:15:18+02:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://mschauer.eu/journal/posts/</loc>
-    <lastmod>2018-01-31T09:00:00+01:00</lastmod>
+    <lastmod>2018-05-17T18:15:18+02:00</lastmod>
     <priority>0</priority>
   </url>
   

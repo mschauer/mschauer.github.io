@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MicrostructureNoise | Journal</title>
+    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../../../css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="http://pub.math.leidenuniv.nl/~schauermr">Moritz Schauer @ Leiden University</a></li>
+      
+      <li><a href="http://pub.math.leidenuniv.nl/~schauermr/journal">Journal</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">MicrostructureNoise</span></h1>
+
+<h2 class="date">2018/05/17</h2>
+</div>
+
+<main>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>(Available as Jupyter notebook at <a href="https://github.com/mschauer/MicrostructureNoise.jl/blob/master/example/MicrostructureNoise.ipynb">https://github.com/mschauer/MicrostructureNoise.jl/blob/master/example/MicrostructureNoise.ipynb</a>)</p>
+
+<p><code>MicrostructureNoise</code> is a Julia package for Bayesian volatility estimation in presence of market microstructure noise implementing the methodology described in our new preprint:</p>
+
+<ul>
+<li>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. <a href="https://arxiv.org/abs/1805.05606">arxiv:1805.05606</a>, 2018.</li>
+</ul>
+
+<p>This blogpost gives a short introduction.</p>
+
+<h3 id="description">Description</h3>
+
+<p>MicrostructureNoise estimates the volatility function $s$ of the stochastic differential equation</p>
+
+<p>$dX_t = b(t,X_t) dt + s(t) dW_t, \quad X_0 = x_0, \quad t \in [0,T]$</p>
+
+<p>from noisy observations of its solution</p>
+
+<p>$Y_i = X(t_i) + V_i, \quad 0 &lt; t_1 &lt; \ldots &lt; t_n = T$</p>
+
+<p>where ${V_i}$ denote unobservable stochastic disturbances. The method is minimalistic in its assumptions on the volatility function, which in particular can itself be a stochastic process.</p>
+
+<p>The estimation methodology is intuitive to understand, given that its ingredients are well-known statistical techniques. The posterior inference is performed via the Gibbs sampler, with the Forward Filtering Backward Simulation algorithm used to reconstruct unobservable states $X(t_i)$. This relies on the Kalman filter. The unknown squared volatility function is a priori modelled as piecewise constant and is assigned the inverse Gamma Markov chain prior, which induces smoothing among adjacent pieces of the function. Next to yielding point estimates (e.g. the posterior mean), the method conducts automatic uncertainty quantification via marginal credible bands.</p>
+
+<p>###Setup</p>
+
+<p>Install <code>MicrostructureNoise</code> via the package manager.</p>
+
+<pre><code>Pkg.add(&quot;MicrostructureNoise&quot;)
+</code></pre>
+
+<p>Then load the packages below.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> MicrostructureNoise, Distributions, Plots
+srand(<span style="color:#00d;font-weight:bold">12</span>);</code></pre></div>
+<p>##Real data example</p>
+
+<p>As a first example, we apply our methodology to infer volatility of the high frequency foreign exchange rate data made available by Pepperstone Limited, the London based forex broker (<a href="https://pepperstone.com/uk/client-resources/historical-tick-data">https://pepperstone.com/uk/client-resources/historical-tick-data</a>). Specifically, we use the EUR/USD tick data (bid prices) for 2 March 2015. We retrieve, log-transform and subsample the data and express time in milliseconds.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#888"># uncomment if you do not mind to create this large file </span>
+<span style="color:#888"># Base.download(&#34;https://www.truefx.com/dev/data//2015/MARCH-2015/EURUSD-2015-03.zip&#34;,&#34;./data/EURUSD-2015-03.zip&#34;)</span>
+<span style="color:#888"># run(`unzip ./data/EURUSD-2015-03.zip -d ./data`)</span>
+dat <span style="color:#333">=</span> readcsv(<span style="background-color:#fff0f0">&#34;../data/EURUSD-2015-03.csv&#34;</span>)
+times <span style="color:#333">=</span> map(a <span style="color:#333">-&gt;</span> <span style="color:#339;font-weight:bold">DateTime</span>(a, <span style="background-color:#fff0f0">&#34;yyyymmdd H:M:S.s&#34;</span>), dat[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">130260</span>,<span style="color:#00d;font-weight:bold">2</span>])
+t <span style="color:#333">=</span> <span style="color:#339;font-weight:bold">Float64</span>[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">/</span><span style="color:#00d;font-weight:bold">1000</span><span style="color:#333">*</span>(times[i]<span style="color:#333">.</span>instant<span style="color:#333">.</span>periods<span style="color:#333">.</span>value<span style="color:#333">-</span>times[<span style="color:#00d;font-weight:bold">1</span>]<span style="color:#333">.</span>instant<span style="color:#333">.</span>periods<span style="color:#333">.</span>value) <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span>length(times)]
+n <span style="color:#333">=</span> length(t)<span style="color:#333">-</span><span style="color:#00d;font-weight:bold">1</span>
+T <span style="color:#333">=</span> t[<span style="color:#080;font-weight:bold">end</span>]
+y <span style="color:#333">=</span> log<span style="color:#333">.</span>(<span style="color:#339;font-weight:bold">Float64</span><span style="color:#333">.</span>(dat[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">130260</span>, <span style="color:#00d;font-weight:bold">3</span>]));</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">plot(t[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>], y[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>], label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;EUR/USD&#34;</span>)</code></pre></div>
+<p><img src="output_5_0.svg" alt="svg" /></p>
+
+<p>The prior specification is done via the <code>Prior</code> struct.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">prior <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>Prior(
+N <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">40</span>,
+
+α1 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
+β1 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
+
+αη <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.01</span>, 
+βη <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.01</span>,
+
+Πα <span style="color:#333">=</span> LogNormal(<span style="color:#60e;font-weight:bold">1.</span>, <span style="color:#60e;font-weight:bold">0.5</span>),
+μ0 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
+C0 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">5.0</span>
+);</code></pre></div>
+<p>Most importantly, we set the number of bins <code>N</code>. A second import choice is the hyper-prior of the smoothing parameter <code>Πα</code>. The technical meaning of the other parameter is explained in our paper.</p>
+
+<p>We now sample the posterior using MCMC.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">α <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.3</span> <span style="color:#888"># Initial smoothness hyperparameter guess</span>
+σα <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.1</span> <span style="color:#888"># Random walk step size for smoothness hyperparameter</span>
+
+td, θs, ηs, αs, p <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>MCMC(prior, t, y, α, σα, <span style="color:#00d;font-weight:bold">1500</span>, printiter<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">500</span>);</code></pre></div>
+<pre><code>500      α 5.380198810926286✓    √η0.001265256088043003
+1000     α 3.16338362080358✓     √η0.0012521150797968476
+1500     α 3.7936135928197197✓   √η0.0012511490349212352
+</code></pre>
+
+<p>The inline help gives a synopsis of the function <code>MCMC</code> (and other functions).</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#333">?</span>MicrostructureNoise<span style="color:#333">.</span>MCMC</code></pre></div>
+<pre><code>MCMC(Π::Union{Prior,Dict}, tt, yy, α0::Float64, σα, iterations; subinds = 1:1:iterations, η0::Float64 = 0.0, printiter = 100) -&gt; td, θ, ηs, αs, pacc
+</code></pre>
+
+<p>Run the Markov Chain Monte Carlo procedure for <code>iterations</code> iterations, on data <code>(tt, yy)</code>, where <code>tt</code> are observation times and <code>yy</code> are observations. <code>α0</code> is the initial guess for the smoothing parameter <code>α</code> (necessary), <code>η0</code> is the initial guess for the noise variance (optional), and <code>σα</code> is the stepsize for the random walk proposal for <code>α</code>.</p>
+
+<p>Prints verbose output every <code>printiter</code> iteration.</p>
+
+<p>Returns <code>td, θs, ηs, αs, pacc</code>, <code>td</code> is the time grid of the bin boundaries, <code>ηs</code>, <code>αs</code> are vectors of iterates, possible subsampled at indices <code>subinds</code>, <code>θs</code> is a Matrix with iterates of <code>θ</code> rows. <code>paccα</code> is the acceptance probability for the update step of <code>α</code>.</p>
+
+<p>Keyword args <code>fixalpha</code>, <code>fixeta</code> when set to <code>true</code> allow fixing <code>α</code> and <code>η</code> at their initial values.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">posterior <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>posterior_volatility(td, θs)
+
+tt, mm <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_median[<span style="color:#333">:</span>])
+
+plot(tt, mm, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;posterior median&#34;</span>, color<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;dark blue&#34;</span>)
+plot!(MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_qlow[<span style="color:#333">:</span>])<span style="color:#333">...</span>,
+    fillrange <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_qup[<span style="color:#333">:</span>])[<span style="color:#00d;font-weight:bold">2</span>], 
+    fillalpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.2</span>,
+    alpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
+    fillcolor<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;blue&#34;</span>,
+    title<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;Volatility estimate&#34;</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;marginal </span><span style="background-color:#eee">$</span>(round(<span style="color:#339;font-weight:bold">Int</span>,posterior<span style="color:#333">.</span>qu<span style="color:#333">*</span><span style="color:#00d;font-weight:bold">100</span>))<span style="background-color:#eee">% c</span><span style="background-color:#fff0f0">redibility band&#34;</span>)</code></pre></div>
+<p><img src="output_12_0.svg" alt="svg" /></p>
+
+<p>A histogram of <code>sqrt.(ηs)</code> visualises the posterior of the observation error <code>η</code>, indicating that there is indeed a non-negligible microstructure noise.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">histogram(sqrt<span style="color:#333">.</span>(ηs[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]), nbins<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">20</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;eta&#34;</span>)</code></pre></div>
+<p><img src="output_14_0.svg" alt="svg" /></p>
+
+<p>##How good does it work: Test with the Heston model</p>
+
+<p>In order to test our model, we simulate the a trajectory of an asset with the Heston model (<a href="https://en.wikipedia.org/wiki/Heston_model">https://en.wikipedia.org/wiki/Heston_model</a>).</p>
+
+<p>The Heston model is  a widely used stochastic volatility model where it is assumed that  the price process of a certain asset, denoted by $S$, evolves over time according to the SDE
+$$
+d S_t = \mu S_t d t + \sqrt{Z_t } S_t d W_t,
+$$
+where the process $Z$ follows the CIR or square root process,
+$$
+d Z_t = \kappa ( \theta - Z_t ) d t + \sigma \sqrt{Z_t} d B_t.
+$$
+Here $W$ and $B$ are correlated Wiener processes with correlation $\rho$.</p>
+
+<p>For this generated asset price trajectory we can compare our estimates from noisy discrete data with the true volatility known from the simulation.</p>
+
+<p>###Generate data from the Heston model</p>
+
+<p>To define the model in Julia and to simulate the trajectory use the package <code>Bridge</code>.
+Install it via the package manager.</p>
+
+<pre><code>Pkg.add(&quot;Bridge&quot;)
+</code></pre>
+
+<p>Usually we would not with $S$ directly, but with its logarithm $X_t=\log S_t$. Here we simulate $S$ directly for simplicity.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> Bridge
+<span style="color:#080;font-weight:bold">using</span> StaticArrays
+<span style="color:#080;font-weight:bold">const</span> R2 <span style="color:#333">=</span> SVector{<span style="color:#00d;font-weight:bold">2</span>,<span style="color:#339;font-weight:bold">Float64</span>};</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">struct Heston <span style="color:#333">&lt;:</span> ContinuousTimeProcess{R2}
+    mu<span style="color:#333">::</span><span style="color:#339;font-weight:bold">Float64</span>
+    kappa<span style="color:#333">::</span><span style="color:#339;font-weight:bold">Float64</span>
+    theta<span style="color:#333">::</span><span style="color:#339;font-weight:bold">Float64</span>
+    sigma<span style="color:#333">::</span><span style="color:#339;font-weight:bold">Float64</span>
+<span style="color:#080;font-weight:bold">end</span>
+Heston(;mu <span style="color:#333">=</span> <span style="color:#007020">NaN</span>, kappa <span style="color:#333">=</span> <span style="color:#007020">NaN</span>, theta <span style="color:#333">=</span> <span style="color:#007020">NaN</span>, sigma <span style="color:#333">=</span> <span style="color:#007020">NaN</span>) <span style="color:#333">=</span> Heston(mu, kappa, theta, sigma)</code></pre></div>
+<pre><code>Heston
+</code></pre>
+
+<p>Define drift $b$ and dispersion $σ$ of the process.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">Bridge<span style="color:#333">.</span>b(s, x, P<span style="color:#333">::</span>Heston) <span style="color:#333">=</span> R2(P<span style="color:#333">.</span>mu<span style="color:#333">*</span>x[<span style="color:#00d;font-weight:bold">1</span>], P<span style="color:#333">.</span>kappa<span style="color:#333">*</span>(P<span style="color:#333">.</span>theta <span style="color:#333">-</span> x[<span style="color:#00d;font-weight:bold">2</span>]))
+Bridge<span style="color:#333">.</span>σ(s, x, P<span style="color:#333">::</span>Heston) <span style="color:#333">=</span> <span style="color:#339;font-weight:bold">Diagonal</span>(R2(sqrt(x[<span style="color:#00d;font-weight:bold">2</span>])<span style="color:#333">*</span>x[<span style="color:#00d;font-weight:bold">1</span>], P<span style="color:#333">.</span>sigma<span style="color:#333">*</span>sqrt(x[<span style="color:#00d;font-weight:bold">2</span>])))</code></pre></div>
+<p>We choose the following setting.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">T <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">1.0</span>
+n <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">4000</span>
+P <span style="color:#333">=</span> Heston(mu <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.02</span>, kappa <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">7.0</span>, theta <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.04</span>, sigma <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.6</span>)</code></pre></div>
+<pre><code>Heston(0.02, 7.0, 0.04, 0.6)
+</code></pre>
+
+<p>The process is simulated on a fine grid and sampled at $n=4000$ random timepoints.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">nf <span style="color:#333">=</span> <span style="color:#00d;font-weight:bold">10</span> <span style="color:#888"># generate the process on a finer grid than it is observed</span>
+
+tfine0 <span style="color:#333">=</span> T <span style="color:#333">.*</span> sort(rand(n<span style="color:#333">*</span>nf<span style="color:#333">-</span><span style="color:#00d;font-weight:bold">1</span>))
+tfine <span style="color:#333">=</span> [<span style="color:#60e;font-weight:bold">0.0</span>; tfine0; T]
+
+is <span style="color:#333">=</span> [i <span style="color:#333">&lt;=</span> n<span style="color:#333">-</span><span style="color:#00d;font-weight:bold">1</span> <span style="color:#080;font-weight:bold">for</span> i <span style="color:#038;font-weight:bold">in</span> <span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span>length(tfine)<span style="color:#333">-</span><span style="color:#00d;font-weight:bold">2</span>]
+is <span style="color:#333">=</span> [<span style="color:#080;font-weight:bold">true</span>; is[randperm(length(is))]; <span style="color:#080;font-weight:bold">true</span>]
+t <span style="color:#333">=</span> tfine[is];
+    </code></pre></div>
+<p>Generate a sample path with the Euler scheme from correlated Brownian motions, $\log$-transform and subsample the data. Also we now the true volatility of of the transformed process by Itô&rsquo;s formula.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">u <span style="color:#333">=</span> R2(<span style="color:#60e;font-weight:bold">1.</span>, P<span style="color:#333">.</span>theta)
+W <span style="color:#333">=</span> sample(tfine, Wiener{R2}())
+ρ <span style="color:#333">=</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.6</span>
+map!(v<span style="color:#333">-&gt;</span>R2(v[<span style="color:#00d;font-weight:bold">1</span>], ρ<span style="color:#333">*</span>v[<span style="color:#00d;font-weight:bold">1</span>] <span style="color:#333">+</span> sqrt(<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">-</span>ρ<span style="color:#333">^</span><span style="color:#00d;font-weight:bold">2</span>)v[<span style="color:#00d;font-weight:bold">2</span>]), W<span style="color:#333">.</span>yy, W<span style="color:#333">.</span>yy) <span style="color:#888"># correlate Brownian motions</span>
+
+Xfine <span style="color:#333">=</span> solve(EulerMaruyama(), u, W, P)
+
+xtrue <span style="color:#333">=</span> log<span style="color:#333">.</span>(first<span style="color:#333">.</span>(Xfine<span style="color:#333">.</span>yy[is]))
+s0(t) <span style="color:#333">=</span> sqrt(Xfine<span style="color:#333">.</span>yy[searchsortedfirst(Xfine<span style="color:#333">.</span>tt, t)][<span style="color:#00d;font-weight:bold">2</span>])
+y <span style="color:#333">=</span> copy(xtrue) 
+
+η0 <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.005</span><span style="color:#333">^</span><span style="color:#00d;font-weight:bold">2</span>
+y <span style="color:#333">.+=</span> randn(n <span style="color:#333">+</span> <span style="color:#00d;font-weight:bold">1</span>) <span style="color:#333">*</span> sqrt(η0);</code></pre></div>
+<p>###Perform inference using <code>MicrostructureNoise</code>.</p>
+
+<p>This proceeds along the same lines as before.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">α <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">5.0</span> <span style="color:#888"># Initial smoothness hyperparameter guess</span>
+σα <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">3.0</span> <span style="color:#888"># Random walk step size for smoothness hyperparameter</span>
+
+td, θs, ηs, αs, p <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>MCMC(prior, t, y, α, σα, <span style="color:#00d;font-weight:bold">10000</span>, printiter<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">500</span>);
+
+println(<span style="background-color:#fff0f0">&#34;acceptance probability </span><span style="background-color:#eee">$p</span><span style="background-color:#fff0f0">&#34;</span>)</code></pre></div>
+<pre><code>500      α 6.853859145847748✓    √η0.005771926854201921
+1000     α 2.3675920707901756    √η0.005699848296846304
+1500     α 5.192703331810684✓    √η0.0056889793178693405
+2000     α 6.672726750385639✓    √η0.005739263457748688
+2500     α 10.954010592981682    √η0.00557738229744995
+3000     α 7.335157644685448     √η0.005621248336034742
+3500     α 3.2354172026801753✓   √η0.005727353421158912
+4000     α 2.6568201471608495    √η0.005689253410411969
+4500     α 3.099298872537003✓    √η0.005632507527647822
+5000     α 7.762047671683255     √η0.005663289695359922
+5500     α 5.852303831066731✓    √η0.005673097727805116
+6000     α 2.5595148075010314    √η0.005753480671481345
+6500     α 7.32620642995769  √η0.005607045117888518
+7000     α 2.7717265420538233    √η0.005898376055226177
+7500     α 10.030202608593427    √η0.0057819434558757715
+8000     α 4.106323352786911     √η0.005709326208812153
+8500     α 4.890730550576268✓    √η0.005731542876067114
+9000     α 10.340522219236512    √η0.0056670123045837574
+9500     α 8.682764529222913✓    √η0.00564884996370438
+10000    α 7.680984090492615✓    √η0.005697928748866279
+acceptance probability 0.347
+</code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">posterior <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>posterior_volatility(td, θs)
+
+tt, mm <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_median[<span style="color:#333">:</span>])
+
+plot(tt, mm, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;posterior median&#34;</span>, linewidth<span style="color:#333">=</span><span style="color:#60e;font-weight:bold">0.5</span>, color<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;dark blue&#34;</span>)
+plot!(t[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>], (s0<span style="color:#333">.</span>(t[<span style="color:#00d;font-weight:bold">1</span><span style="color:#333">:</span><span style="color:#00d;font-weight:bold">10</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]))<span style="color:#333">.^</span><span style="color:#00d;font-weight:bold">2</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;true volatility&#34;</span>, color<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;red&#34;</span>)
+
+
+plot!(MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_qlow[<span style="color:#333">:</span>])<span style="color:#333">...</span>,
+    fillrange <span style="color:#333">=</span> MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<span style="color:#333">.</span>post_t, posterior<span style="color:#333">.</span>post_qup[<span style="color:#333">:</span>])[<span style="color:#00d;font-weight:bold">2</span>], 
+    fillalpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.2</span>,
+    alpha <span style="color:#333">=</span> <span style="color:#60e;font-weight:bold">0.0</span>,
+    fillcolor<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;darkblue&#34;</span>,
+    title<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;Volatility estimate&#34;</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;marginal </span><span style="background-color:#eee">$</span>(round(<span style="color:#339;font-weight:bold">Int</span>,posterior<span style="color:#333">.</span>qu<span style="color:#333">*</span><span style="color:#00d;font-weight:bold">100</span>))<span style="background-color:#eee">% c</span><span style="background-color:#fff0f0">redibility band&#34;</span>)</code></pre></div>
+<p><img src="output_30_0.svg" alt="svg" /></p>
+
+<p>The greyish band mostly covers the red curve, the true volatility.</p>
+
+<p>This is nice: Without even using the knowledge of the model, completely ignoring the drift,
+we still get a nice estimate and reasonable uncertainty quantification of the underlying volatility, and that using from indirect and
+erroneous observations.</p>
+
+<p>A histogram confirms that also the estimate of the observations noise is good.</p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">histogram(sqrt<span style="color:#333">.</span>(ηs[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]), nbins<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">20</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;eta&#34;</span>)</code></pre></div>
+<p><img src="output_32_0.svg" alt="svg" /></p>
+
+<h2 id="references">References</h2>
+
+<ul>
+<li><p>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. <a href="https://arxiv.org/abs/1801.09956">arxiv:1801.09956</a>, 2018.</p></li>
+
+<li><p>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. In preparation.</p></li>
+</ul>
+
+</main>
+
+  <footer>
+  
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+  </footer>
+  </body>
+</html>
+
