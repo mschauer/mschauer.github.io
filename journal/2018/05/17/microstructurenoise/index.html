@@ -159,7 +159,7 @@ Install it via the package manager.</p>
 <pre><code>Pkg.add(&quot;Bridge&quot;)
 </code></pre>
 
-<p>Usually we would not with $S$ directly, but with its logarithm $X_t=\log S_t$. Here we simulate $S$ directly for simplicity.</p>
+<p>Usually we would not work with $S$ directly, but with its logarithm $X_t=\log S_t$. Here we simulate $S$ directly for simplicity.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia"><span style="color:#080;font-weight:bold">using</span> Bridge
 <span style="color:#080;font-weight:bold">using</span> StaticArrays
 <span style="color:#080;font-weight:bold">const</span> R2 <span style="color:#333">=</span> SVector{<span style="color:#00d;font-weight:bold">2</span>,<span style="color:#339;font-weight:bold">Float64</span>};</code></pre></div><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">struct Heston <span style="color:#333">&lt;:</span> ContinuousTimeProcess{R2}
@@ -192,7 +192,7 @@ is <span style="color:#333">=</span> [i <span style="color:#333">&lt;=</span> n<
 is <span style="color:#333">=</span> [<span style="color:#080;font-weight:bold">true</span>; is[randperm(length(is))]; <span style="color:#080;font-weight:bold">true</span>]
 t <span style="color:#333">=</span> tfine[is];
     </code></pre></div>
-<p>Generate a sample path with the Euler scheme from correlated Brownian motions, $\log$-transform and subsample the data. Also we now the true volatility of of the transformed process by Itô&rsquo;s formula.</p>
+<p>Generate a sample path with the Euler scheme from correlated Brownian motions, $\log$-transform and subsample the data. Also we now the true volatility of the transformed process by Itô&rsquo;s formula.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">u <span style="color:#333">=</span> R2(<span style="color:#60e;font-weight:bold">1.</span>, P<span style="color:#333">.</span>theta)
 W <span style="color:#333">=</span> sample(tfine, Wiener{R2}())
 ρ <span style="color:#333">=</span> <span style="color:#333">-</span><span style="color:#60e;font-weight:bold">0.6</span>
@@ -256,10 +256,10 @@ plot!(MicrostructureNoise<span style="color:#333">.</span>piecewise(posterior<sp
 <p>The greyish band mostly covers the red curve, the true volatility.</p>
 
 <p>This is nice: Without even using the knowledge of the model, completely ignoring the drift,
-we still get a nice estimate and reasonable uncertainty quantification of the underlying volatility, and that using from indirect and
-erroneous observations.</p>
+we still get a nice estimate and reasonable uncertainty quantification of the underlying volatility, and that having only indirect and
+erroneous observations at our hands.</p>
 
-<p>A histogram confirms that also the estimate of the observations noise is good.</p>
+<p>A histogram confirms that also the estimate of the observations noise is close to the true value.</p>
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-julia" data-lang="julia">histogram(sqrt<span style="color:#333">.</span>(ηs[<span style="color:#080;font-weight:bold">end</span><span style="color:#333">÷</span><span style="color:#00d;font-weight:bold">2</span><span style="color:#333">:</span><span style="color:#080;font-weight:bold">end</span>]), nbins<span style="color:#333">=</span><span style="color:#00d;font-weight:bold">20</span>, label<span style="color:#333">=</span><span style="background-color:#fff0f0">&#34;eta&#34;</span>)</code></pre></div>
 <p><img src="../../../../MicrostructureNoise/output_32_0.svg" alt="svg" /></p>
 
@@ -268,7 +268,7 @@ erroneous observations.</p>
 <ul>
 <li><p>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility estimation. <a href="https://arxiv.org/abs/1801.09956">arxiv:1801.09956</a>, 2018.</p></li>
 
-<li><p>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. In preparation.</p></li>
+<li><p>Shota Gugushvili, Frank van der Meulen, Moritz Schauer, and Peter Spreij: Nonparametric Bayesian volatility learning under microstructure noise. <a href="https://arxiv.org/abs/1805.05606">arxiv:1805.05606</a>, 2018.</p></li>
 </ul>
 
 </main>
