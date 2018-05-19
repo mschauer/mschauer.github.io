@@ -9,6 +9,9 @@
 h1,h2,h3 {
     line-height:1.2em;
 }
+h2 {
+    margin-top: 2.0em;
+}
 
 @media print{
     body{
@@ -42,6 +45,7 @@ h1, h2, h3 {
     font-family: "garamond", serif;
     color: #033;
 }
+
 h3 {
     color: #022;
 }
@@ -65,12 +69,15 @@ h3 {
  margin: auto;
 }
 
-
-.margin { 
+.margin, .margin-top { 
      height:25px; width:25px; 
      float: left;
      margin-left:-35px;
-     margin-top: 5px;
+     margin-top: 2em;
+}
+
+.margin-top {
+    margin-top: 0.2em;
 }
 
 .symbol {
@@ -100,3 +107,8 @@ nav#navbar a {
     color: #FFFFFF; background: #788; 
     display:block; height:45px; width:45px; 
     overflow:hidden; }
+
+iframe
+{
+    border: 0;
+}

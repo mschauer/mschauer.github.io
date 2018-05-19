@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mannheim Probability and Statistics Seminar: Continuous-discrete smoothing of diffusions | Journal</title>
+    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../../../css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="http://pub.math.leidenuniv.nl/~schauermr">Moritz Schauer @ Leiden University</a></li>
+      
+      <li><a href="http://pub.math.leidenuniv.nl/~schauermr/journal">Journal</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Mannheim Probability and Statistics Seminar: Continuous-discrete smoothing of diffusions</span></h1>
+
+<h2 class="date">2018/05/09</h2>
+</div>
+
+<main>
+
+
+<h2 id="abstract">Abstract</h2>
+
+<p>Suppose X is a multidimensional diffusion taking values in ℝᵈ with drift b and dispersion coefficient σ, satisfying the stochastic differential equation (SDE)</p>
+
+<pre><code>dXₜ = b(t,Xₜ) dt + σ(t,Xₜ) dWₜ. (1)
+</code></pre>
+
+<p>The process W is a vector valued process consisting of independent Brownian motions. We assume the process is incompletely observed at times tᵢ and the n observations are given by</p>
+
+<pre><code>Vᵢ = LᵢXtᵢ + ηᵢ, 
+</code></pre>
+
+<p>Here, for i = 0, &hellip;, n, Lᵢ is a mᵢ × d-matrix with mᵢ ≤ d. The random variables ηᵢ are independent random variables, independent of the diffusion process X.</p>
+
+<p>Reconstructing the path (Xₜ, t ∈ [0, tₙ]) conditional on V₁, &hellip;, Vₙ is known as continuous-discrete smoothing. In case ηᵢ ≡ 0 and Lᵢ = Id (for all i), the problem reduces to sampling independent diffusion bridges. As the transition densities of the diffusion are intractable, we proposed in [1] to simulate diffusion bridge proposals generated from the SDE</p>
+
+<pre><code>dX˚ₜ = b(t,X˚ₜ) dt + q(t,X˚ₜ) dt + σ(t,X˚ₜ) dWₜ, (2)
+</code></pre>
+
+<p>and subsequently accept/reject these using a Metropolis-algorithm step. The “guiding term” q in (2) is chosen to ensure the process X˚ moves to the location of the observations Vᵢ.</p>
+
+<p>This framework can be extended to the general setting. The resulting algorithm does not assume a Gaussian approximation to the smoothing distribution. From a computational point of view, it can be shown that two backward ordinary differential equations need to be solved once, and at each step of the Metropolis-Hastings algorithm the process X˚ has to be simulated forward. The performance of the proposed algorithm is illustrated using numerical examples (including the Lorenz attractor).</p>
+
+<p>This is joint work with Frank van der Meulen (Technical University Delft) .</p>
+
+<p>[1] M. Schauer, F.H. van der Meulen and J.H. van Zanten. Guided proposals for simulating multi-dimensional diffusion bridges. Bernoulli 23(4A), 2917–2950, 2017.</p>
+
+<p>[2] F.H. van der Meulen and M. Schauer. Bayesian estimation of incompletely observed diffusions. Stochastics, 1–22, 2017.</p>
+
+</main>
+
+  <footer>
+  
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+  </footer>
+  </body>
+</html>
+

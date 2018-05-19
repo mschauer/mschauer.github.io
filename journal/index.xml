@@ -24,6 +24,26 @@ Description MicrostructureNoise estimates the volatility function $s$ of the sto
     </item>
     
     <item>
+      <title>Mannheim Probability and Statistics Seminar: Continuous-discrete smoothing of diffusions</title>
+      <link>http://mschauer.eu/journal/2018/05/09/mannheim-probability-and-statistics-seminar-continuous-discrete-smoothing-of-diffusions/</link>
+      <pubDate>Wed, 09 May 2018 15:40:55 +0200</pubDate>
+      
+      <guid>http://mschauer.eu/journal/2018/05/09/mannheim-probability-and-statistics-seminar-continuous-discrete-smoothing-of-diffusions/</guid>
+      <description>Abstract Suppose X is a multidimensional diffusion taking values in ℝᵈ with drift b and dispersion coefficient σ, satisfying the stochastic differential equation (SDE)
+dXₜ = b(t,Xₜ) dt + σ(t,Xₜ) dWₜ. (1)  The process W is a vector valued process consisting of independent Brownian motions. We assume the process is incompletely observed at times tᵢ and the n observations are given by
+Vᵢ = LᵢXtᵢ + ηᵢ,  Here, for i = 0, &amp;hellip;, n, Lᵢ is a mᵢ × d-matrix with mᵢ ≤ d.</description>
+    </item>
+    
+    <item>
+      <title>Seminar Marburg: Nonparametric Bayesian volatility estimation</title>
+      <link>http://mschauer.eu/journal/2018/05/08/seminar-marburg-nonparametric-bayesian-volatility-estimation/</link>
+      <pubDate>Tue, 08 May 2018 15:41:00 +0200</pubDate>
+      
+      <guid>http://mschauer.eu/journal/2018/05/08/seminar-marburg-nonparametric-bayesian-volatility-estimation/</guid>
+      <description>Abstract Given discrete time observations over a fixed time interval, we study a nonparametric Bayesian approach to estimation of the volatility coefficient of a stochastic differential equation. We postulate a histogram-type prior on the volatility with piecewise constant realisations on bins forming a partition of the time interval. The values on the bins are assigned an inverse Gamma Markov chain (IGMC) prior. Posterior inference is straightforward to implement via Gibbs sampling, as the full conditional distributions are available explicitly and turn out to be inverse Gamma.</description>
+    </item>
+    
+    <item>
       <title>Multivariate stochastic differential equations with Bridge</title>
       <link>http://mschauer.eu/journal/2018/01/31/multivariate-stochastic-differential-equations-with-bridge/</link>
       <pubDate>Wed, 31 Jan 2018 09:00:00 +0100</pubDate>
