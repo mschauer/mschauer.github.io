@@ -5,6 +5,8 @@ body {
   line-height: 1.5em;
 }
 
+
+
 /* header and footer areas */
 .menu { padding: 0; }
 .menu li { display: inline-block; }
@@ -15,7 +17,10 @@ body {
   border-radius: 5px;
 }
 .menu, .article-meta, footer { text-align: center; }
-.title { font-size: 1.1em; }
+.title { 
+  font-size: 1.1em; 
+  line-height: 1.2em;
+}
 footer a { text-decoration: none; }
 hr {
   border-style: dashed;
