@@ -8,12 +8,12 @@
   </url>
   
   <url>
-    <loc>http://mschauer.eu/journal/2018/05/09/mannheim-probability-and-statistics-seminar-continuous-discrete-smoothing-of-diffusions/</loc>
+    <loc>http://mschauer.eu/journal/2018/05/09/talk-continuous-discrete-smoothing-of-diffusions/</loc>
     <lastmod>2018-05-09T15:40:55+02:00</lastmod>
   </url>
   
   <url>
-    <loc>http://mschauer.eu/journal/2018/05/08/seminar-marburg-nonparametric-bayesian-volatility-estimation/</loc>
+    <loc>http://mschauer.eu/journal/2018/05/08/talk-nonparametric-bayesian-volatility-estimation/</loc>
     <lastmod>2018-05-08T15:41:00+02:00</lastmod>
   </url>
   
@@ -52,6 +52,12 @@
   
   <url>
     <loc>http://mschauer.eu/journal/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://mschauer.eu/journal/categories/talk/</loc>
+    <lastmod>2018-05-09T15:40:55+02:00</lastmod>
     <priority>0</priority>
   </url>
   

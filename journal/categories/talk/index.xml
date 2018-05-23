@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Talk on Journal</title>
+    <link>http://mschauer.eu/journal/categories/talk/</link>
+    <description>Recent content in Talk on Journal</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 May 2018 15:40:55 +0200</lastBuildDate>
+    
+	<atom:link href="http://mschauer.eu/journal/categories/talk/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Talk: Continuous-discrete smoothing of diffusions</title>
+      <link>http://mschauer.eu/journal/2018/05/09/talk-continuous-discrete-smoothing-of-diffusions/</link>
+      <pubDate>Wed, 09 May 2018 15:40:55 +0200</pubDate>
+      
+      <guid>http://mschauer.eu/journal/2018/05/09/talk-continuous-discrete-smoothing-of-diffusions/</guid>
+      <description>Presentation in the Mannheim Probability and Statistics Seminar. University of Mannheim. Wednesday, 2018-05-09, 12.15-13.00, room A5 C116.
+Abstract Suppose X is a multidimensional diffusion taking values in ℝᵈ with drift b and dispersion coefficient σ, satisfying the stochastic differential equation (SDE)
+dXₜ = b(t,Xₜ) dt + σ(t,Xₜ) dWₜ. (1)  The process W is a vector valued process consisting of independent Brownian motions. We assume the process is incompletely observed at times tᵢ and the n observations are given by</description>
+    </item>
+    
+  </channel>
+</rss>

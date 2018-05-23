@@ -24,22 +24,22 @@ Description MicrostructureNoise estimates the volatility function $s$ of the sto
     </item>
     
     <item>
-      <title>Mannheim Probability and Statistics Seminar: Continuous-discrete smoothing of diffusions</title>
-      <link>http://mschauer.eu/journal/2018/05/09/mannheim-probability-and-statistics-seminar-continuous-discrete-smoothing-of-diffusions/</link>
+      <title>Talk: Continuous-discrete smoothing of diffusions</title>
+      <link>http://mschauer.eu/journal/2018/05/09/talk-continuous-discrete-smoothing-of-diffusions/</link>
       <pubDate>Wed, 09 May 2018 15:40:55 +0200</pubDate>
       
-      <guid>http://mschauer.eu/journal/2018/05/09/mannheim-probability-and-statistics-seminar-continuous-discrete-smoothing-of-diffusions/</guid>
+      <guid>http://mschauer.eu/journal/2018/05/09/talk-continuous-discrete-smoothing-of-diffusions/</guid>
       <description>Presentation in the Mannheim Probability and Statistics Seminar. University of Mannheim. Wednesday, 2018-05-09, 12.15-13.00, room A5 C116.
 Abstract Suppose X is a multidimensional diffusion taking values in ℝᵈ with drift b and dispersion coefficient σ, satisfying the stochastic differential equation (SDE)
 dXₜ = b(t,Xₜ) dt + σ(t,Xₜ) dWₜ. (1)  The process W is a vector valued process consisting of independent Brownian motions. We assume the process is incompletely observed at times tᵢ and the n observations are given by</description>
     </item>
     
     <item>
-      <title>Seminar Marburg: Nonparametric Bayesian volatility estimation</title>
-      <link>http://mschauer.eu/journal/2018/05/08/seminar-marburg-nonparametric-bayesian-volatility-estimation/</link>
+      <title>Talk: Nonparametric Bayesian volatility estimation</title>
+      <link>http://mschauer.eu/journal/2018/05/08/talk-nonparametric-bayesian-volatility-estimation/</link>
       <pubDate>Tue, 08 May 2018 15:41:00 +0200</pubDate>
       
-      <guid>http://mschauer.eu/journal/2018/05/08/seminar-marburg-nonparametric-bayesian-volatility-estimation/</guid>
+      <guid>http://mschauer.eu/journal/2018/05/08/talk-nonparametric-bayesian-volatility-estimation/</guid>
       <description>Presentation: Interdisziplinäres Statistik-Kolloquium der Universitäten Gießen und Marburg. Marburg, 2018-05-08, 18:15 Uhr im Hörsaalgebäude, Biegenstraße 14, Raum: HS 00/0070.
 Abstract Given discrete time observations over a fixed time interval, we study a nonparametric Bayesian approach to estimation of the volatility coefficient of a stochastic differential equation. We postulate a histogram-type prior on the volatility with piecewise constant realisations on bins forming a partition of the time interval. The values on the bins are assigned an inverse Gamma Markov chain (IGMC) prior.</description>
     </item>
