@@ -1,3 +1,9 @@
+a[href^="tel:"] {
+text-decoration: none
+}
+a[href^="mailto:"] {
+text-decoration: none
+}
 #content {
     margin:1em auto;
     margin-left: 8em;
@@ -10,13 +16,13 @@ h1,h2,h3 {
     line-height:1.2em;
 }
 h2 {
-    margin-top: 2.0em;
+    margin-top: 0.5em;
 }
 
-.block {}
+.block {padding-top: 1.0em;}
 
 .block:nth-child(even) {background: #F5F5F5; border-top: 1px solid}
-.block:nth-child(odd) {background: #FFF}
+.block:nth-child(odd) {background: #FFFFFF;  border-top: 1px solid}
 
 @media print{
     body{
@@ -53,6 +59,10 @@ h1, h2, h3 {
 
 h3 {
     color: #022;
+}
+
+.me {
+    text-decoration: underline;
 }
 
 .titel {
