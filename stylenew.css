@@ -12,6 +12,13 @@ text-decoration: none
     font:1em/1.35em sans-serif;
 }
 
+#twitter {
+    margin:1em auto;
+    margin-left: 10em;
+    font:1em/1.35em sans-serif;
+    float: right;
+}
+
 h1,h2,h3 {
     line-height:1.2em;
 }
