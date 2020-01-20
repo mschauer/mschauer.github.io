@@ -6,6 +6,7 @@ text-decoration: none
 }
 #content {
     margin:1em auto;
+    float: left;
     margin-left: 8em;
     max-width:40em;
     padding:0 .62em;
@@ -97,7 +98,7 @@ h3 {
 }
 
 .margin-top {
-    margin-top: 0.2em;
+    margin-top: 1.7em;
 }
 
 .symbol {
