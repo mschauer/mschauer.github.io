@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+  <title>Moritz Schauer's Journal</title>
+  <link>http://mschauer.eu</link>
+  <description>Feed for Juliabloggers</description>
+  <item>
+    <title>Bayesian inference for SDE models</title>
+    <link>https://nextjournal.com/Lobatto/FitzHugh-Nagumo</link>
+    <description>A case study in reproducibility for an excitable stochastic-dynamical model</description>
+  </item>
+</channel>
+
+</rss>
