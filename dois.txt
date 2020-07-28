@@ -8,3 +8,4 @@ http://dx.doi.org/10.3150/16-BEJ833
 http://dx.doi.org/10.1016/j.csda.2013.03.002
 http://dx.doi.org/10.1007/978-1-4614-6825-7_4
 http://dx.doi.org/10.1017/apr.2019.54
+http://dx.doi.org/10.1214/19-BJPS433
