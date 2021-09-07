@@ -1,0 +1,4 @@
+#grep -o -E "https?://dx[^\"]*" index.html
+#grep -o -E "https?://doi[^\"]*" index.html
+
+grep -o -E ">10[^<]*</a>" index.html

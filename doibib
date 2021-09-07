@@ -1,0 +1,1 @@
+ curl -LH "Accept: application/x-bibtex"  $(< dois.txt) > doi.bib
