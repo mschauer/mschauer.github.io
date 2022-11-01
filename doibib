@@ -1,1 +1,1 @@
- curl -LH "Accept: application/x-bibtex"  $(< dois.txt) > doi.bib
+ curl -LH "Accept: application/x-bibtex" -w "\n" $(< dois.txt) > doi.bib

@@ -8,8 +8,8 @@ http://dx.doi.org/10.1051/ps/2019019
 http://dx.doi.org/10.1080/17442508.2017.1381097
 http://dx.doi.org/10.1137/21M1406283
 http://dx.doi.org/10.1214/17-EJS1290
-http://dx.doi.org/10.1214/21-EJS1894
 http://dx.doi.org/10.1214/19-BJPS433
+http://dx.doi.org/10.1214/21-EJS1894
+http://dx.doi.org/10.21105/jcon.00092
 http://dx.doi.org/10.3150/16-BEJ833
 http://dx.doi.org/10.4310/CMS.2019.v17.n3.a8
-http://dx.doi.org/10.21105/jcon.00092
