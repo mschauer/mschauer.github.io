@@ -3,10 +3,12 @@ http://dx.doi.org/10.1007/978-3-030-04161-8_19
 http://dx.doi.org/10.1007/s11203-017-9163-7
 http://dx.doi.org/10.1007/s11222-021-10008-8
 http://dx.doi.org/10.1007/s11222-022-10180-5
+http://dx.doi.org/10.1007/s42081-022-00185-9
 http://dx.doi.org/10.1016/j.csda.2013.03.002
 http://dx.doi.org/10.1017/apr.2019.54
 http://dx.doi.org/10.1051/ps/2019019
 http://dx.doi.org/10.1080/17442508.2017.1381097
+http://dx.doi.org/10.1080/17442508.2022.2150081
 http://dx.doi.org/10.1137/21M1406283
 http://dx.doi.org/10.1214/17-EJS1290
 http://dx.doi.org/10.1214/19-BJPS433
