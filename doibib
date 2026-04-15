@@ -1,1 +1,8 @@
- curl -LH "Accept: application/x-bibtex" -w "\n" $(< dois.txt) > doi.bib
+#!/bin/sh
+
+set -eu
+
+out="${1:-doi.raw.bib}"
+
+curl -fsSLH "Accept: application/x-bibtex" -w "\n" $(cat dois.txt) > "$out"
+printf 'Wrote raw DOI BibTeX to %s. Update doi.bib manually.\n' "$out" >&2
