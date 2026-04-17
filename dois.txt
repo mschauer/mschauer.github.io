@@ -13,6 +13,7 @@ https://doi.org/10.1051/ps/2019019
 https://doi.org/10.1080/17442508.2017.1381097
 https://doi.org/10.1080/17442508.2022.2150081
 https://doi.org/10.1137/21M1406283
+https://doi.org/10.1145/3808321
 https://doi.org/10.1214/17-EJS1290
 https://doi.org/10.1214/19-BJPS433
 https://doi.org/10.1214/21-EJS1894
